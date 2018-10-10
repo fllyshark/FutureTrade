@@ -54,7 +54,7 @@ _join_contracts('J',startdate,endday,freq)
 
 plt.title("future line")
 
-plt.xlabel("time")
+plt.xlabel("clc")
 plt.ylabel("price")
 #设置x坐标轴刻度
 #my_x_ticks = np.arange(0, len(rb_hsdata), 1)
