@@ -109,14 +109,21 @@ def _plt_contracts(contracts,startdate,endday,freq):
     # my_x_ticks = np.arange(0, len(rb_hsdata), 1)
     # plt.xticks(my_x_ticks)
     plt.show()
-
+def _timer_tradetest():
+    hsdata = get_price(rs_const.AllCONTRACTS_MAIN['RB'], start_date='2018-10-11', end_date='2018-10-12', frequency='1m',
+                       skip_paused=True)
+    print(hsdata['close'][-1:])
+    t = Timer(60, _timer_tradetest)
+    t.start()
 auth('15916406969','a456789')#依次输入账号、密码，链接到平台数据库
-startdate='2018-05-27'
-freq='1d'
+startdate='2018-10-10'
+freq='1m'
 endday = datetime.date.today()
 
-_get_countCross(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
-_plt_contracts(rs_const.WATCH_MAIN,startdate,endday,freq)
-
+#_get_countCross(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
+#_plt_contracts(rs_const.WATCH_MAIN,startdate,endday,freq)
+if __name__ == "__main__":
+    t = Timer(60, _timer_tradetest)
+    t.start()
 
 
