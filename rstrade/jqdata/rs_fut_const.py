@@ -8,6 +8,10 @@
 # @Software: PyCharm
 """
 #黑色合约集合
+TEST_MAIN={
+    'RB':'RB9999.XSGE'
+}
+#黑色合约集合
 BLACK_MAIN={
     'RB':'RB9999.XSGE',
     'J':'J9999.XDCE',
@@ -70,6 +74,11 @@ BLACK_LINECOLOR={
     'HC':'g',
     'TC':'r',
     'MA':'m'
+}
+CROSS_STATUS={
+    'CROSSING_ON':'1',
+    'CROSSING_BLOW':'2',
+    'CROSSING_NONE':'3'
 }
 
 clc_filepath='C:\\Users\\zhongjiawurong1019\\均线穿越情况_%s.txt'

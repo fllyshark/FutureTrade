@@ -17,6 +17,7 @@ import datetime
 from rstrade.jqdata import rs_fut_const as rs_const
 from rstrade.util import indictor as indi
 from rstrade.util import fileUtils as fileu
+from rstrade.util import rs_date
 from jqdatasdk import *
 
 
@@ -40,6 +41,30 @@ def _join_contracts_cross_ma(contracts, startdate, endday, freq):
         return 'ON'
     else:
         return 'BLOW'
+def _watch_contracts_cross_ma(contract, startdate, endday, freq):
+    """
+    1，获得各合约历史数据
+    2,计算穿越周期线的合约
+    :param contracts: 合约简写
+    :param startdate: 计算开始日期
+    :param endday: 计算结束日期
+    :param freq: 计算周期
+    :return: 'NU'--无数据、‘ON’--线上、‘BLOW’--线下
+    """
+    hsdata = get_price(rs_const.AllCONTRACTS_MAIN[contract], start_date=startdate, end_date=endday, frequency=freq,
+                       skip_paused=True)
+    if len(hsdata)<=2:
+        print("%s--该合约数据不足！exit--\n"%rs_const.AllCONTRACTS_MAIN[contract])
+        return 'NU'
+    malast=indi.ma(hsdata[:-1],50)
+    print(hsdata[-10:])
+    print('%s---%s---%s\n'%(hsdata['close'][-2],malast[-1],hsdata['close'][-1]))
+    if (hsdata['close'][-1]>malast[-1] and hsdata['close'][-2]<malast[-1]):
+        return rs_const.CROSS_STATUS['CROSSING_ON']
+    elif(hsdata['close'][-1]<malast[-1] and hsdata['close'][-2]>malast[-1]):
+        return rs_const.CROSS_STATUS['CROSSING_BLOW']
+    else:
+        return rs_const.CROSS_STATUS['CROSSING_NONE']
 def _join_contracts_toplot(plt,contracts, startdate, endday, freq):
     """
     1，获得各合约历史数据
@@ -110,20 +135,35 @@ def _plt_contracts(contracts,startdate,endday,freq):
     # plt.xticks(my_x_ticks)
     plt.show()
 def _timer_tradetest():
-    hsdata = get_price(rs_const.AllCONTRACTS_MAIN['RB'], start_date='2018-10-11', end_date='2018-10-12', frequency='1m',
-                       skip_paused=True)
-    print(hsdata['close'][-1:])
-    t = Timer(60, _timer_tradetest)
+    _timer_crossing_watchdog(rs_const.CONTRACTS_MAIN,startdate,'2018-10-13 14:21:00',freq)
+    t = Timer(200, _timer_tradetest)
     t.start()
+def _timer_crossing_watchdog(contracts,startdate, endday, freq):
+    pd_arr = pd.DataFrame(columns=('contract','cross'))
+    arr_status=[]
+    str_date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+    for index  in contracts:
+        str_status=_watch_contracts_cross_ma(index, startdate, endday, freq)
+        #if str_status ==rs_const.CROSS_STATUS['CROSSING_ON']:
+        arr_status.append([index,str_status])
+        str_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+        if(str_status == rs_const.CROSS_STATUS['CROSSING_BLOW'] or str_status == rs_const.CROSS_STATUS['CROSSING_ON']):
+            print('%s穿越均线合约：%s'%(str_date,index))
+    #print(arr_status)
+    return
+
 auth('15916406969','a456789')#依次输入账号、密码，链接到平台数据库
 startdate='2018-10-10'
-freq='1m'
-endday = datetime.date.today()
+freq='15m'
+endday = rs_date.today()
 
 #_get_countCross(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
 #_plt_contracts(rs_const.WATCH_MAIN,startdate,endday,freq)
 if __name__ == "__main__":
-    t = Timer(60, _timer_tradetest)
-    t.start()
+    print(rs_date.today())
+    print(rs_date.get_yestoday())
+    #_timer_tradetest()
+    #_get_countCross()
+    #_timer_crossing_watchdog(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
 
 
