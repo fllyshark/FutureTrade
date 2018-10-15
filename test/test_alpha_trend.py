@@ -17,16 +17,23 @@ rs_conn_jqdata.auth('15916406969','a456789')#依次输入账号、密码，链�
 class Test(unittest.TestCase):
 
     def set_data(self):
-        self.contracts = rs_const.CONTRACTS_MAIN
-        self.startdate = '2018-7-12'
+        self.contracts = rs_const.C_MAIN_BLACK
+        self.startdate = '2018-9-12'
         self.enddate = rs_date.get_tomorow()
-        self.feq = '60m'
-        self.whitch_ma=50
+        self.feq = '15m'
+        self.whitch_ma=200
 
 
     def test__get_count_position_of_ma(self):
         self.set_data()
         alpha_trend._get_count_position_of_ma(self.contracts,self.startdate,self.enddate,self.feq,self.whitch_ma)
+
+    def test_get_count_contracts_number(self):
+        self.set_data()
+        alpha_trend._get_count_contracts_number(self.contracts,self.startdate,self.enddate,self.feq,self.whitch_ma)
+    def test__get_count_position_of_ma_ago(self):
+        self.set_data()
+        alpha_trend._get_count_contracts_number(self.contracts,self.startdate,self.enddate,self.feq,self.whitch_ma)
     def test_get_count_crossing_change_cycle(self):
         alpha_trend._get_count_crossing_change_cycle()
 

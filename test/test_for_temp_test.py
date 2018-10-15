@@ -33,6 +33,19 @@ class Test(unittest.TestCase):
     def test_tem(self):
         filling = pd.DataFrame(index=pd.date_range('2018-10-01 10:00:00', periods=30,freq='3600s'))
         print(filling)
+        for i in range(-50,0,1):
+            print(i)
+        pds=pd.Series(['3'],index=pd.DatetimeIndex(['2019-10-10']))
+        pd1=pd.Series(['4'],index=pd.DatetimeIndex(['2019-11-10']))
+        #pd2=pd.concat([pds,pd1],axis=1,join='outer')
+        pds=pds.append(pd1)
+        #print(pds)
+        pdm=pd.DataFrame(['a'],index=pd.DatetimeIndex(['2019-10-10']),columns={'ma'})
+        pdm1=pd.DataFrame(['b'],index=pd.DatetimeIndex(['2019-11-10']),columns={'ma'})
+        pdm=pdm.append(pdm1)
+        print(pdm['ma'][0])
+        print(pdm.iloc[-1].values[0])
+
 
 
 if __name__ == "__main__":

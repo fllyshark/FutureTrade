@@ -36,10 +36,13 @@ def _join_contracts_cross_ma_close(contract, startdate, enddate, freq,whitch_ma)
     hsdata=hsdata[:rs_date.get_now()]#默认get_price()会填充当日全部数据，清除未来数据
     print(hsdata.tail(10))
     malast=rs_indictor.ma(hsdata,whitch_ma)#计算均线值
+
     if hsdata['close'][-1]>malast[-1]:
-        return rs_const.C_POSITON_MA_STATUS['_ON_MA']
+        pds = pd.DataFrame({rs_const.C_POSITON_MA_STATUS['_ON_MA']}, index=[hsdata.index[-1]], columns={'ma'})
+        return pds
     else:
-        return rs_const.C_POSITON_MA_STATUS['_BLOW_MA']
+        pds = pd.DataFrame({rs_const.C_POSITON_MA_STATUS['_BLOW_MA']}, index=[hsdata.index[-1]], columns={'ma'})
+        return pds
 def _join_contracts_cross_ma_ago(contract, startdate, enddate, whichtime_ago,freq,whitch_ma):
     """
     功能：得到当前合约相当MA（）均线的位置
@@ -61,12 +64,17 @@ def _join_contracts_cross_ma_ago(contract, startdate, enddate, whichtime_ago,fre
         print("%s--该合约无数据！exit--\n"%rs_const.AllCONTRACTS_MAIN[contract])
         return rs_const.C_POSITON_MA_STATUS['_NONE_MA']
     hsdata=hsdata[:whichtime_ago]#默认get_price()会填充当日全部数据，清除未来数据
-    print(hsdata[:-10])
+    #print(hsdata[:-10])
     malast=rs_indictor.ma(hsdata,whitch_ma)#计算均线值
-    if hsdata['close'][-1]>malast[-1]:
-        return rs_const.C_POSITON_MA_STATUS['_ON_MA']
-    else:
-        return rs_const.C_POSITON_MA_STATUS['_BLOW_MA']
+    pdc = pd.DataFrame([], index=[], columns={'ma'})
+    for i in range(-200, 0, 1):
+        if hsdata['close'][i]>malast[i]:
+            STATUS=rs_const.C_POSITON_MA_STATUS['_ON_MA']
+        else:
+            STATUS = rs_const.C_POSITON_MA_STATUS['_BLOW_MA']
+        pds = pd.DataFrame([STATUS], index=[hsdata.index[i]], columns={'ma'})
+        pdc=pdc.append(pds)
+    return pdc
 def _append_whichday_freq_close(contract, startdate=datetime.today().date(), enddate=datetime.today().date(),freq='60m'):
     """
     获得当日当前周期所有收盘价
@@ -81,13 +89,7 @@ def _append_whichday_freq_close(contract, startdate=datetime.today().date(), end
                        skip_paused=True)
     print(hsdata.index.hour())
     #if(hour>15)
-def _check_whichday_freq_is_all_in_json(checkdate,freq):
-    """
 
-    :param checkdate:
-    :param freq:
-    :return:
-    """
 def _count_all_contracts_flow():#计算所有主要合约当日涨幅
     print('_count')
 def _count_big_contracts_bigflow():#计算主要合约涨跌幅超过3%的数量

@@ -11,7 +11,7 @@ import datetime
 import json
 from rstrade.jqdata import alpha_base_func as base_func
 from rstrade.jqdata import rs_fut_const as rs_const
-from rstrade.util import fileUtils as u_file
+from rstrade.util import fileUtils as rs_file
 from rstrade.jqdata import rs_fut_var as rs_var
 from rstrade.util import rs_date
 
@@ -25,11 +25,12 @@ def _get_count_position_of_ma(contracts,startdate,endday,freq,which_ma):
     arr_contracts_on=[]
     arr_contracts_blow=[]
     for index in contracts:
-        str_stutas=base_func._join_contracts_cross_ma_close(index, startdate, endday, freq,which_ma)
-        if str_stutas == rs_const.C_POSITON_MA_STATUS['_ON_MA']:
+        pds=base_func._join_contracts_cross_ma_close(index, startdate, endday, freq,which_ma)
+        position_ma = pds['ma'][0].pop()
+        if position_ma== rs_const.C_POSITON_MA_STATUS['_ON_MA']:
             v_count_crosson=v_count_crosson+1
             arr_contracts_on.append(index)
-        elif str_stutas == rs_const.C_POSITON_MA_STATUS['_BLOW_MA']:
+        elif position_ma == rs_const.C_POSITON_MA_STATUS['_BLOW_MA']:
             v_count_crossblow=v_count_crossblow+1
             arr_contracts_blow.append(index)
     str_to_file='[on_ma_count:%s]' \
@@ -37,12 +38,42 @@ def _get_count_position_of_ma(contracts,startdate,endday,freq,which_ma):
                 '[all_ma_count:%s]'\
                 %(v_count_crosson,v_count_crossblow,v_count_crosson+v_count_crossblow)
     print(str_to_file)
-    one_dict_record={rs_date.today()+'-'+str(rs_date.get_hour()):{'on_ma_count':v_count_crosson,'blow_ma_count':v_count_crossblow,
+    one_dict_record={pds.index[0].strftime('%Y-%m-%d %H:%M:%S'):{'on_ma_count':v_count_crosson,'blow_ma_count':v_count_crossblow,
                                                          'all_ma_count':v_count_crosson+v_count_crossblow+1,
                                                          'on_ma_contracts':arr_contracts_on,'blow_ma_contracts':arr_contracts_blow}}
     tem_filepath = rs_var.v_position_ma_filepathepath%(rs_date.today(),freq)
-    u_file.appendDictRecordToFile(tem_filepath,one_dict_record)
+    rs_file.appendDictRecordToFile(tem_filepath,one_dict_record)
+def _get_count_contracts_number(contracts,startdate,endday,freq,which_ma):
+    """
+
+    :param contracts:
+    :param startdate:
+    :param endday:
+    :param freq:
+    :param which_ma:
+    :return:
+    """
+    for index in contracts:
+        pds=base_func._join_contracts_cross_ma_ago(index, startdate, endday,rs_date.get_tomorow(),freq,which_ma)
+        comp = pds.iloc[-1].values[0]
+        i=-1
+        count=0
+        print(pds)
+        while(pds['ma'][i] ==comp and len(pds['ma'])>count):
+            count=count+1
+            i=i-1
+        print('%s----count=%s',(index,count))
+
 def _get_count_crossing_change_cycle():
     tem_filepath = rs_var.v_position_ma_filepathepath % (rs_date.today())
-    dicts=u_file.readJsonFile(tem_filepath)
+    dicts=rs_file.readJsonFile(tem_filepath)
     print(dicts)
+def _check_whichday_freq_is_all_in_json(checkdate,freq):
+    """
+    补齐缺失的数据
+    :param checkdate:
+    :param freq:
+    :return:
+    """
+    tem_filepath = rs_var.v_position_ma_filepathepath % (checkdate,freq)
+    dicts=rs_file.readJsonFile(tem_filepath)
