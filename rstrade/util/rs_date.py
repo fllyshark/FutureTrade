@@ -25,7 +25,7 @@ def _quar(mon):
 
 
 def today():
-    day = datetime.today()
+    day = datetime.today().date()
     return str(day)
 
 
@@ -58,6 +58,9 @@ def get_now():
 def get_yestoday():
     yesterday = datetime.today().date() + timedelta(days=-1)
     return yesterday.strftime('%Y-%m-%d')
+def get_tomorow():
+    tomorow = datetime.today().date() + timedelta(days=1)
+    return tomorow.strftime('%Y-%m-%d')
 
 def int2time(timestamp):
     datearr = datetime.utcfromtimestamp(timestamp)

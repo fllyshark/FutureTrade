@@ -10,7 +10,7 @@
 """
 
 import os
-
+import json
 def mkdir(path):
 	"""
 	path 写法：file = "G:\\xxoo\\test"
@@ -64,7 +64,32 @@ def readLinesFromFile(filePath):
 		lines = f.readlines()
 	return lines
 
-
+def readJsonFile(filePath):
+	"""
+	使用：
+	for key in dicts.keys():
+		print(key)
+	for valu in dicts.values():
+		print(valu.values())
+	:param filePath:
+	:return:
+	"""
+	fb = open(filePath, 'r')
+	dictsobj = json.load(fb)
+	fb.close()
+	return dictsobj
+def appendDictRecordToFile(filepath,appenddicts):
+	try:
+		fb = open(filepath, 'r')
+		dicts = json.load(fb)
+		fb.close()
+		dicts={**dicts,**appenddicts}
+		jsondata = json.dumps(dicts,separators=(',', ':'))
+	except:
+		jsondata = json.dumps(appenddicts,separators=(',', ':'))
+	with open(filepath, 'w') as fw:
+		fw.write(jsondata)
+		fw.close()
 def writeStrToFile(filePath, string):
 	"""
 	将字符串写入文件中
@@ -73,7 +98,7 @@ def writeStrToFile(filePath, string):
 	"""
 	with open(filePath, "wb") as f:
 		f.write(string)
-
+	f.close()
 
 def appendStrToFile(filePath, string):
 	"""
@@ -83,6 +108,7 @@ def appendStrToFile(filePath, string):
 	"""
 	with open(filePath, "a") as f:
 		f.write(string)
+	f.close()
 
 
 def dumpToFile(filePath, content):

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import datetime
 from rstrade.jqdata import rs_fut_const as rs_const
 from rstrade.util import indictor as indi
-from rstrade.util import fileUtils as fileu
+from rstrade.util import fileUtils as u_file
 from rstrade.util import rs_date
 from jqdatasdk import *
 
@@ -37,6 +37,7 @@ def _join_contracts_cross_ma(contracts, startdate, endday, freq):
         print("%s--该合约无数据！exit--\n"%rs_const.AllCONTRACTS_MAIN[contracts])
         return 'NU'
     malast=indi.ma(hsdata,50)
+    print('malast=%s'%malast[-1])
     if hsdata['close'][-1]>malast[-1]:
         return 'ON'
     else:
@@ -108,7 +109,7 @@ def _get_countCross(contracts,startdate,endday,freq):
                 '总合约数（多头数）：%s\n'\
                 %(v_count_crosson,v_count_crossblow,v_count_crosson+v_count_crossblow)
 
-    fileu.appendStrToFile(tem_filepath,str_to_file)
+    u_file.appendStrToFile(tem_filepath,str_to_file)
     print(arr_contracts_on)
 def _plt_contracts(contracts,startdate,endday,freq):
     """
@@ -153,17 +154,15 @@ def _timer_crossing_watchdog(contracts,startdate, endday, freq):
     return
 
 auth('15916406969','a456789')#依次输入账号、密码，链接到平台数据库
-startdate='2018-10-10'
+startdate='2018-08-11'
 freq='15m'
-endday = rs_date.today()
+enddate = rs_date.today()
 
-#_get_countCross(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
-#_plt_contracts(rs_const.WATCH_MAIN,startdate,endday,freq)
 if __name__ == "__main__":
     print(rs_date.today())
     print(rs_date.get_yestoday())
     #_timer_tradetest()
-    #_get_countCross()
+    _get_countCross(rs_const.CONTRACTS_MAIN,startdate,enddate,freq)
     #_timer_crossing_watchdog(rs_const.CONTRACTS_MAIN,startdate,endday,freq)
 
 
