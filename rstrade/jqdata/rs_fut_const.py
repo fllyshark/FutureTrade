@@ -98,6 +98,7 @@ BLACK_LINECOLOR={
     'HC':'g',
     'TC':'r',
     'MA':'m'
+
 }
 #盘中实时穿越状态
 CROSS_STATUS={

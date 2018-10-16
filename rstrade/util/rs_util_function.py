@@ -8,7 +8,7 @@
 # @Software: PyCharm
 """
 ison=True
-def _is_print(s):
+def util_is_print(s):
     if(ison):
         print(s)
     return

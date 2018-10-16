@@ -9,6 +9,7 @@
 """
 import datetime
 import json
+import pandas as pd
 from rstrade.jqdata import alpha_base_func as base_func
 from rstrade.jqdata import rs_fut_const as rs_const
 from rstrade.util import fileUtils as rs_file
@@ -43,6 +44,7 @@ def _get_count_position_of_ma(contracts,startdate,endday,freq,which_ma):
                                                          'on_ma_contracts':arr_contracts_on,'blow_ma_contracts':arr_contracts_blow}}
     tem_filepath = rs_var.v_position_ma_filepathepath%(rs_date.today(),freq)
     rs_file.appendDictRecordToFile(tem_filepath,one_dict_record)
+#模型1
 def _get_count_contracts_number(contracts,startdate,endday,freq,which_ma):
     """
 
@@ -53,17 +55,31 @@ def _get_count_contracts_number(contracts,startdate,endday,freq,which_ma):
     :param which_ma:
     :return:
     """
-    for index in contracts:
+    dic=dict()
+    for index  in contracts:
         pds=base_func._join_contracts_cross_ma_ago(index, startdate, endday,rs_date.get_tomorow(),freq,which_ma)
         comp = pds.iloc[-1].values[0]
         i=-1
         count=0
-        print(pds)
+        if index=='HC':
+            print(pds)
         while(pds['ma'][i] ==comp and len(pds['ma'])>count):
             count=count+1
             i=i-1
-        print('%s----count=%s',(index,count))
+        list0=[int(comp),count]
+        if index in dic.keys():
+            dic.append(list0)
+        else:
+            dic[index]=list0
+    print(dic)
+    return dic
 
+#模型二，涨幅
+def zhangfu():
+    return
+#模型三,std
+def std():
+    return
 def _get_count_crossing_change_cycle():
     tem_filepath = rs_var.v_position_ma_filepathepath % (rs_date.today())
     dicts=rs_file.readJsonFile(tem_filepath)

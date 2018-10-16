@@ -46,6 +46,30 @@ class Test(unittest.TestCase):
         print(pdm['ma'][0])
         print(pdm.iloc[-1].values[0])
 
+        dict= ['a',list(range(1,50))]
+        print(dict)
+
+
+all_items = [11, 22, 33, 44, 55, 66, 77, 88, 99]
+
+
+def test_dictSort():
+    dic = dict()
+
+    # loop
+    for value in all_items:
+        if value > 66:
+            if "k1" in dic.keys():
+                dic["k1"].append(value)
+            else:
+                dic["k1"] = [value]
+        else:
+            if "k2" in dic.keys():
+                dic["k2"].append(value)
+            else:
+                dic["k2"] = [value]
+
+
 
 
 if __name__ == "__main__":

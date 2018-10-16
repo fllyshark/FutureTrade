@@ -63,11 +63,12 @@ def _join_contracts_cross_ma_ago(contract, startdate, enddate, whichtime_ago,fre
     if len(hsdata)<=0:
         print("%s--该合约无数据！exit--\n"%rs_const.AllCONTRACTS_MAIN[contract])
         return rs_const.C_POSITON_MA_STATUS['_NONE_MA']
-    hsdata=hsdata[:whichtime_ago]#默认get_price()会填充当日全部数据，清除未来数据
+    #hsdata=hsdata[:whichtime_ago]#默认get_price()会填充当日全部数据，清除未来数据
+    hsdata=hsdata[:rs_date.get_now()]#默认get_price()会填充当日全部数据，清除未来数据
     #print(hsdata[:-10])
     malast=rs_indictor.ma(hsdata,whitch_ma)#计算均线值
     pdc = pd.DataFrame([], index=[], columns={'ma'})
-    for i in range(-200, 0, 1):
+    for i in range(-49, 0, 1):
         if hsdata['close'][i]>malast[i]:
             STATUS=rs_const.C_POSITON_MA_STATUS['_ON_MA']
         else:
