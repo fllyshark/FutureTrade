@@ -30,12 +30,12 @@ def plt_ma_count(contracts,startdate,endday,freq,which_ma):
     for key in dic.keys():
         xzhou=dic[key][1]
         yzhou=0
-        if dic[key][1]==2:
+        if dic[key][0]==2:
             yzhou=dic[key][1]*-1
         else:
             yzhou=dic[key][1]
         plt.plot([xzhou,xzhou],[0,yzhou],label=key)
-        plt.text(xzhou, yzhou, yzhou, ha='center', va='bottom', fontsize=9)
+        plt.text(xzhou, yzhou, key+':'+str(yzhou), ha='center', va='bottom', fontsize=9)
     plt.xlabel("周期数")
     plt.ylabel("之上数")
 

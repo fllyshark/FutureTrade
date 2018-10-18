@@ -65,10 +65,45 @@ def _join_contracts_cross_ma_ago(contract, startdate, enddate, whichtime_ago,fre
         return rs_const.C_POSITON_MA_STATUS['_NONE_MA']
     #hsdata=hsdata[:whichtime_ago]#默认get_price()会填充当日全部数据，清除未来数据
     hsdata=hsdata[:rs_date.get_now()]#默认get_price()会填充当日全部数据，清除未来数据
-    #print(hsdata[:-10])
+    if 'HC'==contract:
+        print(hsdata[:-20])
     malast=rs_indictor.ma(hsdata,whitch_ma)#计算均线值
     pdc = pd.DataFrame([], index=[], columns={'ma'})
-    for i in range(-49, 0, 1):
+    for i in range(-60, 0, 1):
+        if hsdata['close'][i]>malast[i]:
+            STATUS=rs_const.C_POSITON_MA_STATUS['_ON_MA']
+        else:
+            STATUS = rs_const.C_POSITON_MA_STATUS['_BLOW_MA']
+        pds = pd.DataFrame([STATUS], index=[hsdata.index[i]], columns={'ma'})
+        pdc=pdc.append(pds)
+    return pdc
+def _join_contracts_std_ago(contract, startdate, enddate, whichtime_ago,freq,whitch_std):
+    """
+    功能：得到当前合约相当MA（）均线的位置
+    1，获得单一合约历史数据
+    2,计算ma数值
+    3,计算相对均线的位置
+    4,which_timeago 要获得过去哪个时间的Ma，位置情况格式"%Y-%m-%d %H:%M:%S"
+    注意：endday-startday周期数应满足计算ma的数量，不然ma不对
+    :param contracts: 合约简写
+    :param startdate: 计算开始日期
+    :param endday: 计算结束日期
+    :param freq: 计算周期
+    :param whitch_std 多少周期的均线值
+    :return: 'NU'--无数据、‘ON’--线上、‘BLOW’--线下
+    """
+    hsdata = get_price(rs_const.AllCONTRACTS_MAIN[contract], start_date=startdate, end_date=enddate, frequency=freq,
+                       skip_paused=True)
+    if len(hsdata)<=0:
+        print("%s--该合约无数据！exit--\n"%rs_const.AllCONTRACTS_MAIN[contract])
+        return rs_const.C_POSITON_MA_STATUS['_NONE_MA']
+    #hsdata=hsdata[:whichtime_ago]#默认get_price()会填充当日全部数据，清除未来数据
+    hsdata=hsdata[:rs_date.get_now()]#默认get_price()会填充当日全部数据，清除未来数据
+    if 'HC'==contract:
+        print(hsdata[:-20])
+    malast=rs_indictor.ma(hsdata,whitch_std)#计算std中间线均线值
+    pdc = pd.DataFrame([], index=[], columns={'ma'})
+    for i in range(-60, 0, 1):
         if hsdata['close'][i]>malast[i]:
             STATUS=rs_const.C_POSITON_MA_STATUS['_ON_MA']
         else:

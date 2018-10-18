@@ -61,11 +61,13 @@ def _get_count_contracts_number(contracts,startdate,endday,freq,which_ma):
         comp = pds.iloc[-1].values[0]
         i=-1
         count=0
-        if index=='HC':
-            print(pds)
-        while(pds['ma'][i] ==comp and len(pds['ma'])>count):
+        if len(pds)<=1:
+            continue
+        while(len(pds['ma'])>count and pds['ma'][i] ==comp):
             count=count+1
             i=i-1
+        if comp ==rs_const.C_POSITON_MA_STATUS['_BLOW_MA']:
+            count = -count
         list0=[int(comp),count]
         if index in dic.keys():
             dic.append(list0)
@@ -78,7 +80,17 @@ def _get_count_contracts_number(contracts,startdate,endday,freq,which_ma):
 def zhangfu():
     return
 #模型三,std
-def std():
+def get_std_model(contracts,startdate,endday,freq,which_std):
+    """
+    获得当前价格与std 关系
+    :param contracts:
+    :param startdate:
+    :param endday:
+    :param freq:
+    :param which_std:
+    :return:
+    """
+
     return
 def _get_count_crossing_change_cycle():
     tem_filepath = rs_var.v_position_ma_filepathepath % (rs_date.today())
